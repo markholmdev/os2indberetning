@@ -86,6 +86,17 @@ namespace DBUpdater
             {
                 result.Add(address);
             }
+            else if (index == 0)
+            {
+                // This is for handling a special case of an adress where the street name starts with a number. The street that prompted this fix was "6. Julivej" in Fredericia.
+                // This fix may call for a refactor of the entire method to a more generic handling of addresses.
+
+                var addressWithoutFirstChar = address.Substring(1, address.Length - 1);
+                var newIndexofFirstDigit = addressWithoutFirstChar.IndexOfAny("0123456789".ToCharArray());
+
+                result.Add(address.Substring(0, newIndexofFirstDigit));
+                result.Add(address.Substring(newIndexofFirstDigit + 1, address.Length - (newIndexofFirstDigit + 1)));
+            }
             else
             {
                 result.Add(address.Substring(0, index - 1));
@@ -99,10 +110,10 @@ namespace DBUpdater
         /// </summary>
         public void MigrateOrganisations()
         {
-            _logger.Log($"{this.GetType().Name}, MigrateOrganisations() Initial: ", "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateOrganisations() started");
             var orgs = _dataProvider.GetOrganisationsAsQueryable().OrderBy(x => x.Level);
 
-            _logger.Log($"{this.GetType().Name}, MigrateOrganisations() Amount of orgs=" + orgs.Count(), "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateOrganisations(), Amount of orgunits= {orgs.Count()}");
             var i = 0;
             foreach (var org in orgs)
             {
@@ -155,7 +166,7 @@ namespace DBUpdater
             
             }
 
-            _logger.Log($"{this.GetType().Name}, MigrateOrganisations() done: ", "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateOrganisations() done: ");
             Console.WriteLine("Done migrating organisations.");
         }
 
@@ -164,12 +175,12 @@ namespace DBUpdater
         /// </summary>
         public void MigrateEmployees()
         {
-            _logger.Log($"{this.GetType().Name}, MigrateEmployees() initial ", "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateEmployees() started");
             foreach (var person in _personRepo.AsQueryable())
             {
                 person.IsActive = false;
             }
-            _logger.Log($"{this.GetType().Name}, MigrateEmployees() All persons IsActive = false. Amount of persons in personrepo=" + _personRepo.AsQueryable().Count(), "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateEmployees(), All persons IsActive = false. Amount of persons in personrepo= {_personRepo.AsQueryable().Count()}");
             _personRepo.Save();
 
             var empls = _dataProvider.GetEmployeesAsQueryable();
@@ -177,7 +188,7 @@ namespace DBUpdater
             var i = 0;
             var distinctEmpls = empls.DistinctBy(x => x.CPR).ToList();
 
-            _logger.Log($"{this.GetType().Name}, MigrateEmployees() Amount of employees in distinctEmpls: " + distinctEmpls.Count(), "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateEmployees() Amount of employees in distinctEmpls: {distinctEmpls.Count()}");
             foreach (var employee in distinctEmpls)
             {
                 i++;
@@ -203,8 +214,8 @@ namespace DBUpdater
                 personToInsert.Mail = employee.Email ?? "";
                 personToInsert.IsActive = true;
             }
-            _logger.Log($"{this.GetType().Name}, MigrateEmployees() Before save in personrepo. ", "DBUpdater", 3);
             _personRepo.Save();
+            _logger.Debug($"{this.GetType().Name}, MigrateEmployees(), Users are active again");
 
             /**g
              * We need the person id before we can attach personal addresses
@@ -226,7 +237,7 @@ namespace DBUpdater
                     _personalAddressRepo.Save();
                 }
             }
-            _logger.Log($"{this.GetType().Name}, MigrateEmployees() Home adresses updated. ", "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateEmployees(), Home adresses updated.");
             _personalAddressRepo.Save();
 
             //Sets all employments to end now in the case there was
@@ -237,7 +248,7 @@ namespace DBUpdater
             {
                 employment.EndDateTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             }
-            _logger.Log($"{this.GetType().Name}, MigrateEmployees() All employments end date set to now. ", "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateEmployees(), All employments end date set to now.");
             _emplRepo.Save();
 
             i = 0;
@@ -256,7 +267,7 @@ namespace DBUpdater
                     _emplRepo.Save();
                 }
             }
-            _logger.Log($"{this.GetType().Name}, MigrateEmployees() Employments added to persons. ", "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, MigrateEmployees(), Employments added to persons.");
             _personalAddressRepo.Save();
             _emplRepo.Save();
 
@@ -264,10 +275,9 @@ namespace DBUpdater
             var dirtyAddressCount = _cachedRepo.AsQueryable().Count(x => x.IsDirty);
             if (dirtyAddressCount > 0)
             {
-                _logger.Log($"{this.GetType().Name}, MigrateEmployees() There are dirty addresses. ", "DBUpdater", 3);
+                _logger.Debug($"{this.GetType().Name}, MigrateEmployees(), There are {dirtyAddressCount} dirty address(es).");
                 foreach (var admin in _personRepo.AsQueryable().Where(x => x.IsAdmin && x.IsActive))
                 {
-                    _logger.Log($"{this.GetType().Name}, MigrateEmployees() Amount of dirty adresses: " + dirtyAddressCount, "DBUpdater", 3);
                     _mailSender.SendMail(admin.Mail, "Der er adresser der mangler at blive vasket", "Der mangler at blive vasket " + dirtyAddressCount + "adresser");
                 }
             }
@@ -292,7 +302,7 @@ namespace DBUpdater
 
             if (orgUnit == null)
             {
-                _logger.Log($"{this.GetType().Name}, CreateEmployment(): OrgUnit does not exist. MaNr={empl.MaNr}, orgUnitId={empl.LOSOrgId}", "DBUpdater", 3);
+                _logger.Error($"{this.GetType().Name}, CreateEmployment(), OrgUnit does not exist. MaNr={empl.MaNr}, orgUnitId={empl.LOSOrgId}");
                 throw new Exception("OrgUnit does not exist.");
             }
 
@@ -346,7 +356,7 @@ namespace DBUpdater
             var person = _personRepo.AsQueryable().FirstOrDefault(x => x.Id == personId);
             if (person == null)
             {
-                _logger.Log($"{this.GetType().Name}, UpdateHomeAddress(): person does not exist. personId={personId}, MaNr={empl.MaNr}", "DBUpdater", 3);
+                _logger.Error($"{this.GetType().Name}, UpdateHomeAddress(), Person does not exist. personId={personId}, MaNr={empl.MaNr}");
                 throw new Exception("Person does not exist.");
             }
 
@@ -510,7 +520,7 @@ namespace DBUpdater
             {
                 _subService.UpdateReportsAffectedBySubstitute(sub);
             }
-            _logger.Log($"{this.GetType().Name}, UpdateLeadersOnExpiredOrActivatedSubstitutes(): done", "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, UpdateLeadersOnExpiredOrActivatedSubstitutes() finished");
         }
 
         public void AddLeadersToReportsThatHaveNone()
@@ -532,7 +542,7 @@ namespace DBUpdater
                 }
             }
             _reportRepo.Save();
-            _logger.Log($"{this.GetType().Name}, AddLeadersToReportsThatHaveNone(): done", "DBUpdater", 3);
+            _logger.Debug($"{this.GetType().Name}, AddLeadersToReportsThatHaveNone() finished");
         }
     }
 }

@@ -35,6 +35,7 @@
 
         today = dd + '-' + mm + '-' + yyyy;
         $('#dateCreated').text(today);
+        $scope.Today = today;
 
 
 
@@ -42,12 +43,12 @@
 
         $.ajax({
             type: "GET",
-            url: "odata/DriveReports/Service.Eksport?start=" + startDate + "&end=" + endDate + "&name=" + employee + "&orgUnit=" + orgUnit,
+            url: "odata/DriveReports/Service.Eksport?start=" + startDate + "&end=" + endDate + "&personId=" + employee + "&orgunitId=" + orgUnit,
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
                 $scope.Name = result.Name;
-                $scope.Licenseplates = result.LicensePlates;
+                $scope.LicensePlates = result.LicensePlates;
                 $scope.OrgUnit = result.OrgUnit;
                 $scope.Municipality = result.Municipality;
                 $scope.DateInterval = result.DateInterval;
@@ -68,7 +69,7 @@
             excel: {
                 fileName: "Rapport-" + today + ".xlsx",
                 proxyURL: "//demos.telerik.com/kendo-ui/service/export",
-                filterable: true
+                filterable: false
             }, pdf: {
                 margin: { top: "1cm", left: "1cm", right: "1cm", bottom: "1cm" },
                 landscape: true,
@@ -92,8 +93,28 @@
                         }
                     }
                 },
-                pageSize: 10
+                pageSize: 20,
+               serverPaging: true,
+               serverAggregates: false,
+               serverSorting: true,
+               serverFiltering: true,
+               sort: { field: "DriveDateTimestamp", dir: "desc" },
             },
+            pageable: {
+               messages: {
+                   display: "{0} - {1} af {2} indberetninger", //{0} is the index of the first record on the page, {1} - index of the last record on the page, {2} is the total amount of records
+                   empty: "Ingen indberetninger at vise",
+                   page: "Side",
+                   of: "af {0}", //{0} is total amount of pages
+                   itemsPerPage: "indberetninger pr. side",
+                   first: "Gå til første side",
+                   previous: "Gå til forrige side",
+                   next: "Gå til næste side",
+                   last: "Gå til sidste side",
+                   refresh: "Genopfrisk"
+               },
+               pageSizes: [5, 10, 20, 30, 40, 50, 100, 150, 200]
+           },
             resizable: true,
             columns: [
                 {
@@ -103,9 +124,6 @@
                 },
                 {
                     field: "CreatedDateTimestamp",
-                    headerAttributes: {
-                        "class": "verticalText"
-                    },
                     title: "Dato for indberetning", 
                     width: 100
                 },
@@ -207,24 +225,80 @@
                     width: 150
                 },
                 { 
-                    field: "Accounting", 
-                    title: "Kontering",
+                    field: "UserComment", 
+                    title: "Bemærkning",
                     width: 100 
                 }
 
             ],
             excelExport: function (e) {
-                var sheet = e.workbook.sheets[0];
+                // e.workbook.sheets[1] will contain employee data from grid header.
+                e.workbook.sheets[1] = {
+                    rows:[
+                        {
+                            cells: [ // this is a row
+                                { value: "Navn" }, // this is column 1
+                                { value: $scope.Name } // this is column 2
+                            ]
+                        },
+                        {
+                            cells: [ 
+                                { value: "Nummerplade" },
+                                { value: $scope.LicensePlates }
+                            ]
+                        },
+                        {
+                            cells: [
+                                { value: "Adresse" }, 
+                                { value: $scope.HomeAddressStreet + " " + $scope.HomeAddressTown} 
+                            ]
+                        },
+                        {
+                            cells: [
+                                { value: "Afdeling" }, 
+                                { value: $scope.OrgUnit} 
+                            ]
+                        },
+                        {
+                            cells: [
+                                { value: "Kommune" },
+                                { value: $scope.Municipality}
+                            ]
+                        },
+                        {
+                            cells: [ 
+                                { value: "Dato interval for udbetaling" },
+                                { value: $scope.DateInterval}
+                            ]
+                        },
+                        {
+                            cells: [
+                                { value: "Admin" }, 
+                                { value: $scope.AdminName} 
+                            ]
+                        },
+                        {
+                            cells: [
+                                { value: "Dato for rapportdannelse" },
+                                { value: $scope.Today}
+                            ]
+                        }
+                    ]
+                }
 
-                var isRoundTripTemplate = kendo.template(this.columns[5].template);
+                // e.workbook.sheets[0] contains reports
+                var sheet0 = e.workbook.sheets[0];
+                
+                // Add roundtrip, extra distance and fourkmrule templates to the excel cheet columns.
+                var IsRoundTripTemplate = kendo.template(this.columns[5].template);
                 var IsExtraDistanceTemplate = kendo.template(this.columns[6].template);
                 var FourKmRuleTemplate = kendo.template(this.columns[7].template);
 
-                for (var i = 1; i < sheet.rows.length; i++) {
-                    var row = sheet.rows[i];
+                for (var i = 1; i < sheet0.rows.length-1; i++) {
+                    var row = sheet0.rows[i];
 
-                    var isRoundTripdataItem = {
-                        isRoundTrip: row.cells[5].value
+                    var IsRoundTripdataItem = {
+                        IsRoundTrip: row.cells[5].value
                     };
                     var IsExtraDistancedataItem = {
                         IsExtraDistance: row.cells[6].value
@@ -232,7 +306,7 @@
                     var FourKmRuledataItem = {
                         FourKmRule: row.cells[7].value
                     };
-                    row.cells[5].value = isRoundTripTemplate(isRoundTripdataItem);
+                    row.cells[5].value = IsRoundTripTemplate(IsRoundTripdataItem);
                     row.cells[6].value = IsExtraDistanceTemplate(IsExtraDistancedataItem);
                     row.cells[7].value = FourKmRuleTemplate(FourKmRuledataItem);
                 }
