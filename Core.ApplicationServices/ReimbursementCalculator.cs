@@ -216,22 +216,22 @@ namespace Core.ApplicationServices
 								//---------------------------------------------------------------------------------------------------------
 								// Debug log.
 								if (enableExtraDebugLog == true) {
-									_logger.Log(String.Format("**************************************************"), "web", 3);
-									_logger.Log(String.Format("      Report Full name: {0}", report.FullName), "web", 3);
-									_logger.Log(String.Format("        Report Comment: {0}", report.Comment), "web", 3);
-									_logger.Log(String.Format(" Report Starts at home: {0}", report.StartsAtHome), "web", 3);
-									_logger.Log(String.Format("   Report Ends at home: {0}", report.EndsAtHome), "web", 3);
-									_logger.Log(String.Format(" Report Home to border: {0}", report.HomeToBorderDistance), "web", 3);
-									_logger.Log(String.Format("       Report Distance: {0}", report.Distance), "web", 3);
-									_logger.Log(String.Format("         Report Points: {0} points", report.DriveReportPoints.Count), "web", 3);
+									_logger.Debug(String.Format("**************************************************") );
+									_logger.Debug(String.Format("      Report Full name: {0}", report.FullName) );
+									_logger.Debug(String.Format("        Report Comment: {0}", report.Comment) );
+									_logger.Debug(String.Format(" Report Starts at home: {0}", report.StartsAtHome) );
+									_logger.Debug(String.Format("   Report Ends at home: {0}", report.EndsAtHome) );
+									_logger.Debug(String.Format(" Report Home to border: {0}", report.HomeToBorderDistance) );
+									_logger.Debug(String.Format("       Report Distance: {0}", report.Distance) );
+									_logger.Debug(String.Format("         Report Points: {0} points", report.DriveReportPoints.Count) );
 									foreach (DriveReportPoint driveReportPoint in altDriveReportPoints) {
-										_logger.Log(String.Format("           Description: {0}", driveReportPoint.Description), "web", 3);
-										_logger.Log(String.Format("        Position: Lat.: {0} Long.: {1}", driveReportPoint.Latitude, driveReportPoint.Longitude), "web", 3);
-										_logger.Log(String.Format("               Address: {0} {1}", driveReportPoint.StreetName, driveReportPoint.StreetNumber), "web", 3);
-										_logger.Log(String.Format("                        {0} {1}", driveReportPoint.ZipCode, driveReportPoint.Town), "web", 3);
+										_logger.Debug(String.Format("           Description: {0}", driveReportPoint.Description) );
+										_logger.Debug(String.Format("        Position: Lat.: {0} Long.: {1}", driveReportPoint.Latitude, driveReportPoint.Longitude) );
+										_logger.Debug(String.Format("               Address: {0} {1}", driveReportPoint.StreetName, driveReportPoint.StreetNumber) );
+										_logger.Debug(String.Format("                        {0} {1}", driveReportPoint.ZipCode, driveReportPoint.Town) );
 									}
-									_logger.Log(String.Format(" Report Route geometry: {0}", report.RouteGeometry), "web", 3);
-									_logger.Log(String.Format(""), "web", 3);
+									_logger.Debug(String.Format(" Report Route geometry: {0}", report.RouteGeometry) );
+									_logger.Debug(String.Format("") );
 								}
 								//---------------------------------------------------------------------------------------------------------
 								#endregion
@@ -252,12 +252,12 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format("1) Calculate A1 - Distance between HOME and the first LOCATION (the route in the report)"), "web", 3);
+										_logger.Debug(String.Format("1) Calculate A1 - Distance between HOME and the first LOCATION (the route in the report)") );
 										foreach (Address address in altAddressesToHome) {
-											_logger.Log(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber), "web", 3);
+											_logger.Debug(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber) );
 										}
-										_logger.Log(String.Format(" Distance: {0}", altDistanceToHome), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" Distance: {0}", altDistanceToHome) );
+										_logger.Debug(String.Format("") );
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -271,12 +271,12 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format(" Calculate A2 - Distance for the entire route (the route in the report)"), "web", 3);
+										_logger.Debug(String.Format(" Calculate A2 - Distance for the entire route (the route in the report)") );
 										foreach (Address address in altAddressesToHome) {
-											_logger.Log(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber), "web", 3);
+											_logger.Debug(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber) );
 										}
-										_logger.Log(String.Format(" Distance: {0}", altDistanceA), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" Distance: {0}", altDistanceA) );
+										_logger.Debug(String.Format("") );
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -292,12 +292,12 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format("1) Calculate B1 - Distance between WORK and the first LOCATION"), "web", 3);
+										_logger.Debug(String.Format("1) Calculate B1 - Distance between WORK and the first LOCATION") );
 										foreach (Address address in altAddressesToWork) {
-											_logger.Log(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber), "web", 3);
+											_logger.Debug(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber) );
 										}
-										_logger.Log(String.Format(" Distance: {0}", altDistanceToWork), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" Distance: {0}", altDistanceToWork) );
+										_logger.Debug(String.Format("") );
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -312,12 +312,12 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format(" Calculate B2 - Distance for the entire alternative route"), "web", 3);
+										_logger.Debug(String.Format(" Calculate B2 - Distance for the entire alternative route") );
 										foreach (Address address in altAddressesToWork) {
-											_logger.Log(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber), "web", 3);
+											_logger.Debug(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber) );
 										}
-										_logger.Log(String.Format(" Distance: {0}", altDistanceB), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" Distance: {0}", altDistanceB) );
+										_logger.Debug(String.Format("") );
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -332,8 +332,8 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format(" To substract: {0}", -altToSubtract1), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" To substract: {0}", -altToSubtract1) );
+										_logger.Debug(String.Format("") );
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -357,12 +357,12 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format("2) Calculate A1 - Distance between the second last LOCATION and HOME (the route in the report)"), "web", 3);
+										_logger.Debug(String.Format("2) Calculate A1 - Distance between the second last LOCATION and HOME (the route in the report)"));
 										foreach (Address address in altAddressesToHome) {
-										_logger.Log(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber), "web", 3);
+										_logger.Debug(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber));
 										}
-										_logger.Log(String.Format(" Distance: {0}", altDistanceToHome), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" Distance: {0}", altDistanceToHome));
+										_logger.Debug(String.Format(""));
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -376,12 +376,12 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format(" Calculate A2 - Distance for the entire route (the route in the report)"), "web", 3);
+										_logger.Debug(String.Format(" Calculate A2 - Distance for the entire route (the route in the report)") );
 										foreach (Address address in altAddressesToHome) {
-										_logger.Log(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber), "web", 3);
+										_logger.Debug(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber) );
 										}
-										_logger.Log(String.Format(" Distance: {0}", altDistanceA), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" Distance: {0}", altDistanceA) );
+										_logger.Debug(String.Format("") );
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -397,12 +397,12 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format("1) Calculate B1 - Distance between the second last LOCATION and WORK"), "web", 3);
+										_logger.Debug(String.Format("1) Calculate B1 - Distance between the second last LOCATION and WORK") );
 										foreach (Address address in altAddressesToWork) {
-										_logger.Log(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber), "web", 3);
+										_logger.Debug(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber) );
 										}
-										_logger.Log(String.Format(" Distance: {0}", altDistanceToWork), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" Distance: {0}", altDistanceToWork) );
+										_logger.Debug(String.Format("") );
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -417,12 +417,12 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format(" Calculate B2 - Distance for the entire alternative route"), "web", 3);
+										_logger.Debug(String.Format(" Calculate B2 - Distance for the entire alternative route") );
 										foreach (Address address in altAddressesToWork) {
-										_logger.Log(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber), "web", 3);
+										_logger.Debug(String.Format(" Address: {0} {1}", address.StreetName, address.StreetNumber) );
 										}
-										_logger.Log(String.Format(" Distance: {0}", altDistanceB), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" Distance: {0}", altDistanceB) );
+										_logger.Debug(String.Format("") );
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -437,8 +437,8 @@ namespace Core.ApplicationServices
 									//---------------------------------------------------------------------------------------------------------
 									// Debug log.
 									if (enableExtraDebugLog == true) {
-										_logger.Log(String.Format(" To substract: {0}", -altToSubtract2), "web", 3);
-										_logger.Log(String.Format(""), "web", 3);
+										_logger.Debug(String.Format(" To substract: {0}", -altToSubtract2));
+										_logger.Debug(String.Format(""));
 									}
 									//---------------------------------------------------------------------------------------------------------
 									#endregion
@@ -537,12 +537,12 @@ namespace Core.ApplicationServices
 			//---------------------------------------------------------------------------------------------------------
 			// Debug log.
 			if (enableExtraDebugLog == true) {
-				_logger.Log(String.Format(""), "web", 3);
-				_logger.Log(String.Format("Subtract - 4 KM rule: {0}", toSubtractFourKmRule), "web", 3);
-				_logger.Log(String.Format("Subtract - Home to work rule: {0}", toSubtractHomeRule), "web", 3);
-				_logger.Log(String.Format("Subtract - Alternative rule: {0}", toSubtractAltRule), "web", 3);
-				_logger.Log(String.Format("Subtract - Total: {0}", (toSubtractFourKmRule + toSubtractHomeRule + toSubtractAltRule)), "web", 3);
-				_logger.Log(String.Format("**************************************************"), "web", 3);
+				_logger.Debug(String.Format(""));
+				_logger.Debug(String.Format("Subtract - 4 KM rule: {0}", toSubtractFourKmRule));
+				_logger.Debug(String.Format("Subtract - Home to work rule: {0}", toSubtractHomeRule));
+				_logger.Debug(String.Format("Subtract - Alternative rule: {0}", toSubtractAltRule));
+				_logger.Debug(String.Format("Subtract - Total: {0}", (toSubtractFourKmRule + toSubtractHomeRule + toSubtractAltRule)));
+				_logger.Debug(String.Format("**************************************************"));
 			}
 			//---------------------------------------------------------------------------------------------------------
 			#endregion
