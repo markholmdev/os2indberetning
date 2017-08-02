@@ -245,7 +245,7 @@ namespace Core.ApplicationServices
             //Fetch personal approver for the person (Person and Leader of the substitute is the same)
             var personalApprover =
                 _substituteRepository.AsQueryable()
-                    .SingleOrDefault(
+                    .FirstOrDefault(
                         s =>
                             s.PersonId != s.LeaderId && s.PersonId == person.Id &&
                             s.StartDateTimestamp < currentDateTimestamp && s.EndDateTimestamp > currentDateTimestamp);
@@ -255,7 +255,7 @@ namespace Core.ApplicationServices
             }
 
             //Find an org unit where the person is not the leader, and then find the leader of that org unit to attach to the drive report
-            var orgUnit = _orgUnitRepository.AsQueryable().SingleOrDefault(o => o.Id == empl.OrgUnitId);
+            var orgUnit = _orgUnitRepository.AsQueryable().FirstOrDefault(o => o.Id == empl.OrgUnitId);
             var leaderOfOrgUnit =
                 _employmentRepository.AsQueryable().FirstOrDefault(e => e.OrgUnit.Id == orgUnit.Id && e.IsLeader && e.StartDateTimestamp < currentDateTimestamp && (e.EndDateTimestamp > currentDateTimestamp || e.EndDateTimestamp == 0));
 
@@ -268,7 +268,7 @@ namespace Core.ApplicationServices
 
             while ((leaderOfOrgUnit == null && orgUnit.Level > 0) || (leaderOfOrgUnit != null && leaderOfOrgUnit.PersonId == person.Id))
             {
-                leaderOfOrgUnit = _employmentRepository.AsQueryable().SingleOrDefault(e => e.OrgUnit.Id == orgUnit.ParentId && e.IsLeader &&
+                leaderOfOrgUnit = _employmentRepository.AsQueryable().FirstOrDefault(e => e.OrgUnit.Id == orgUnit.ParentId && e.IsLeader &&
                                                                                             e.StartDateTimestamp < currentTimestamp &&
                                                                                             (e.EndDateTimestamp == 0 || e.EndDateTimestamp > currentTimestamp)); 
                 orgUnit = orgUnit.Parent;
@@ -296,7 +296,7 @@ namespace Core.ApplicationServices
             var loopHasFinished = false;
             while (!loopHasFinished)
             {
-                sub = _substituteRepository.AsQueryable().SingleOrDefault(s => s.OrgUnitId == orgToCheck.Id && s.PersonId == leader.Id && s.StartDateTimestamp < currentDateTimestamp && s.EndDateTimestamp > currentDateTimestamp && s.PersonId.Equals(s.LeaderId));
+                sub = _substituteRepository.AsQueryable().FirstOrDefault(s => s.OrgUnitId == orgToCheck.Id && s.PersonId == leader.Id && s.StartDateTimestamp < currentDateTimestamp && s.EndDateTimestamp > currentDateTimestamp && s.PersonId.Equals(s.LeaderId));
                 if (sub != null)
                 {
                     if(sub.Sub == null)
@@ -329,7 +329,7 @@ namespace Core.ApplicationServices
             var empl = _employmentRepository.AsQueryable().First(x => x.Id == driveReport.EmploymentId);
 
             //Find an org unit where the person is not the leader, and then find the leader of that org unit to attach to the drive report
-            var orgUnit = _orgUnitRepository.AsQueryable().SingleOrDefault(o => o.Id == empl.OrgUnitId);
+            var orgUnit = _orgUnitRepository.AsQueryable().FirstOrDefault(o => o.Id == empl.OrgUnitId);
             var leaderOfOrgUnit =
                 _employmentRepository.AsQueryable().FirstOrDefault(e => e.OrgUnit.Id == orgUnit.Id && e.IsLeader && e.StartDateTimestamp < currentDateTimestamp && (e.EndDateTimestamp > currentDateTimestamp || e.EndDateTimestamp == 0));
 
@@ -342,7 +342,7 @@ namespace Core.ApplicationServices
 
             while ((leaderOfOrgUnit == null && orgUnit.Level > 0) || (leaderOfOrgUnit != null && leaderOfOrgUnit.PersonId == person.Id))
             {
-                leaderOfOrgUnit = _employmentRepository.AsQueryable().SingleOrDefault(e => e.OrgUnit.Id == orgUnit.ParentId && e.IsLeader &&
+                leaderOfOrgUnit = _employmentRepository.AsQueryable().FirstOrDefault(e => e.OrgUnit.Id == orgUnit.ParentId && e.IsLeader &&
                                                                                             e.StartDateTimestamp < currentTimestamp &&
                                                                                             (e.EndDateTimestamp == 0 || e.EndDateTimestamp > currentTimestamp));
                 orgUnit = orgUnit.Parent;
